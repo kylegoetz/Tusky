@@ -37,6 +37,9 @@ import com.keylesspalace.tusky.di.Injectable
 import com.keylesspalace.tusky.entity.AccessToken
 import com.keylesspalace.tusky.network.ConnectionManager
 import com.keylesspalace.tusky.network.MastodonApi
+import com.keylesspalace.tusky.settings.PrefKeys.CLIENT_ID
+import com.keylesspalace.tusky.settings.PrefKeys.CLIENT_SECRET
+import com.keylesspalace.tusky.settings.PrefKeys.DOMAIN
 import com.keylesspalace.tusky.util.getNonNullString
 import com.keylesspalace.tusky.util.rickRoll
 import com.keylesspalace.tusky.util.shouldRickRoll
@@ -307,9 +310,6 @@ class LoginActivity : BaseActivity(), Injectable {
         private const val TAG = "LoginActivity" // logging tag
         private const val OAUTH_SCOPES = "read write follow push"
         private const val LOGIN_MODE = "LOGIN_MODE"
-        private const val DOMAIN = "domain"
-        private const val CLIENT_ID = "clientId"
-        private const val CLIENT_SECRET = "clientSecret"
 
         const val MODE_DEFAULT = 0
         const val MODE_ADDITIONAL_LOGIN = 1

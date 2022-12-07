@@ -40,6 +40,10 @@ object PrefKeys {
     const val WELLBEING_HIDE_STATS_POSTS = "wellbeingHideStatsPosts"
     const val WELLBEING_HIDE_STATS_PROFILE = "wellbeingHideStatsProfile"
 
+    const val DOMAIN = "domain"
+    const val CLIENT_ID = "clientId"
+    const val CLIENT_SECRET = "clientSecret"
+
     const val HTTP_PROXY_ENABLED = "httpProxyEnabled"
     const val HTTP_PROXY_SERVER = "httpProxyServer"
     const val HTTP_PROXY_PORT = "httpProxyPort"
