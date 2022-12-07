@@ -32,8 +32,8 @@ import com.keylesspalace.tusky.components.timeline.util.ifExpected
 import com.keylesspalace.tusky.db.AccountManager
 import com.keylesspalace.tusky.entity.Poll
 import com.keylesspalace.tusky.entity.Status
+import com.keylesspalace.tusky.network.ConnectionManager
 import com.keylesspalace.tusky.network.FilterModel
-import com.keylesspalace.tusky.network.MastodonApi
 import com.keylesspalace.tusky.usecase.TimelineCases
 import com.keylesspalace.tusky.util.getDomain
 import com.keylesspalace.tusky.util.isLessThan
@@ -55,18 +55,20 @@ import javax.inject.Inject
  */
 class NetworkTimelineViewModel @Inject constructor(
     timelineCases: TimelineCases,
-    private val api: MastodonApi,
+    private val connectionManager: ConnectionManager,
     eventHub: EventHub,
     accountManager: AccountManager,
     sharedPreferences: SharedPreferences,
     filterModel: FilterModel
-) : TimelineViewModel(timelineCases, api, eventHub, accountManager, sharedPreferences, filterModel) {
+) : TimelineViewModel(timelineCases, connectionManager, eventHub, accountManager, sharedPreferences, filterModel) {
 
     var currentSource: NetworkTimelinePagingSource? = null
 
     val statusData: MutableList<StatusViewData> = mutableListOf()
 
     var nextKey: String? = null
+
+    private val api get() = connectionManager.mastodonApi
 
     @OptIn(ExperimentalPagingApi::class)
     override val statuses = Pager(
@@ -145,6 +147,7 @@ class NetworkTimelineViewModel @Inject constructor(
 
                 val idAbovePlaceholder = statusData.getOrNull(placeholderIndex - 1)?.id
 
+                @Suppress("BlockingMethodInNonBlockingContext")
                 val statusResponse = fetchStatusesForKind(
                     fromId = idAbovePlaceholder,
                     uptoId = null,

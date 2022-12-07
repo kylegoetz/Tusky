@@ -26,7 +26,7 @@ import com.keylesspalace.tusky.appstore.EventHub
 import com.keylesspalace.tusky.components.instanceinfo.InstanceInfoRepository
 import com.keylesspalace.tusky.entity.Announcement
 import com.keylesspalace.tusky.entity.Emoji
-import com.keylesspalace.tusky.network.MastodonApi
+import com.keylesspalace.tusky.network.ConnectionManager
 import com.keylesspalace.tusky.util.Error
 import com.keylesspalace.tusky.util.Loading
 import com.keylesspalace.tusky.util.Resource
@@ -36,10 +36,10 @@ import javax.inject.Inject
 
 class AnnouncementsViewModel @Inject constructor(
     private val instanceInfoRepo: InstanceInfoRepository,
-    private val mastodonApi: MastodonApi,
+    private val connectionManager: ConnectionManager,
     private val eventHub: EventHub
 ) : ViewModel() {
-
+    private val mastodonApi get() = connectionManager.mastodonApi
     private val announcementsMutable = MutableLiveData<Resource<List<Announcement>>>()
     val announcements: LiveData<Resource<List<Announcement>>> = announcementsMutable
 

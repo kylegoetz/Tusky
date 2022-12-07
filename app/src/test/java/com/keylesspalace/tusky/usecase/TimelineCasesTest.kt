@@ -4,6 +4,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.keylesspalace.tusky.appstore.EventHub
 import com.keylesspalace.tusky.appstore.PinEvent
 import com.keylesspalace.tusky.entity.Status
+import com.keylesspalace.tusky.network.ConnectionManager
 import com.keylesspalace.tusky.network.MastodonApi
 import io.reactivex.rxjava3.core.Single
 import okhttp3.ResponseBody.Companion.toResponseBody
@@ -23,6 +24,7 @@ import java.util.Date
 class TimelineCasesTest {
 
     private lateinit var api: MastodonApi
+    private lateinit var connectionManager: ConnectionManager
     private lateinit var eventHub: EventHub
     private lateinit var timelineCases: TimelineCases
 
@@ -32,8 +34,9 @@ class TimelineCasesTest {
     fun setup() {
 
         api = mock()
+        connectionManager = mock { on { mastodonApi } doReturn(api) }
         eventHub = EventHub()
-        timelineCases = TimelineCases(api, eventHub)
+        timelineCases = TimelineCases(connectionManager, eventHub)
     }
 
     @Test

@@ -6,13 +6,13 @@ import com.keylesspalace.tusky.components.notifications.NotificationHelper
 import com.keylesspalace.tusky.components.notifications.disableUnifiedPushNotificationsForAccount
 import com.keylesspalace.tusky.db.AccountManager
 import com.keylesspalace.tusky.db.AppDatabase
-import com.keylesspalace.tusky.network.MastodonApi
+import com.keylesspalace.tusky.network.ConnectionManager
 import com.keylesspalace.tusky.util.removeShortcut
 import javax.inject.Inject
 
 class LogoutUsecase @Inject constructor(
     private val context: Context,
-    private val api: MastodonApi,
+    private val connectionManager: ConnectionManager,
     private val db: AppDatabase,
     private val accountManager: AccountManager,
     private val draftHelper: DraftHelper
@@ -30,7 +30,7 @@ class LogoutUsecase @Inject constructor(
             val clientId = activeAccount.clientId
             val clientSecret = activeAccount.clientSecret
             if (clientId != null && clientSecret != null) {
-                api.revokeOAuthToken(
+                connectionManager.mastodonApi.revokeOAuthToken(
                     clientId = clientId,
                     clientSecret = clientSecret,
                     token = activeAccount.accessToken

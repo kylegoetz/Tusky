@@ -46,7 +46,7 @@ import com.keylesspalace.tusky.di.Injectable
 import com.keylesspalace.tusky.entity.Relationship
 import com.keylesspalace.tusky.entity.TimelineAccount
 import com.keylesspalace.tusky.interfaces.AccountActionListener
-import com.keylesspalace.tusky.network.MastodonApi
+import com.keylesspalace.tusky.network.ConnectionManager
 import com.keylesspalace.tusky.settings.PrefKeys
 import com.keylesspalace.tusky.util.HttpHeaderLink
 import com.keylesspalace.tusky.util.hide
@@ -62,7 +62,7 @@ import javax.inject.Inject
 class AccountListFragment : Fragment(R.layout.fragment_account_list), AccountActionListener, Injectable {
 
     @Inject
-    lateinit var api: MastodonApi
+    lateinit var connectionManager: ConnectionManager
     @Inject
     lateinit var accountManager: AccountManager
 
@@ -70,6 +70,7 @@ class AccountListFragment : Fragment(R.layout.fragment_account_list), AccountAct
 
     private lateinit var type: Type
     private var id: String? = null
+    private val api get() = connectionManager.mastodonApi
 
     private lateinit var scrollListener: EndlessOnScrollListener
     private lateinit var adapter: AccountAdapter<*>

@@ -30,7 +30,7 @@ import com.keylesspalace.tusky.entity.Attachment
 import com.keylesspalace.tusky.entity.NewPoll
 import com.keylesspalace.tusky.entity.NewStatus
 import com.keylesspalace.tusky.entity.Status
-import com.keylesspalace.tusky.network.MastodonApi
+import com.keylesspalace.tusky.network.ConnectionManager
 import dagger.android.AndroidInjection
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -47,7 +47,8 @@ import javax.inject.Inject
 class SendStatusService : Service(), Injectable {
 
     @Inject
-    lateinit var mastodonApi: MastodonApi
+    lateinit var connectionManager: ConnectionManager
+    private val mastodonApi get() = connectionManager.mastodonApi
     @Inject
     lateinit var accountManager: AccountManager
     @Inject

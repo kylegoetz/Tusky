@@ -21,7 +21,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import at.connyduck.calladapter.networkresult.fold
 import com.keylesspalace.tusky.entity.TimelineAccount
-import com.keylesspalace.tusky.network.MastodonApi
+import com.keylesspalace.tusky.network.ConnectionManager
 import com.keylesspalace.tusky.util.Either
 import com.keylesspalace.tusky.util.Either.Left
 import com.keylesspalace.tusky.util.Either.Right
@@ -33,10 +33,11 @@ import javax.inject.Inject
 
 data class State(val accounts: Either<Throwable, List<TimelineAccount>>, val searchResult: List<TimelineAccount>?)
 
-class AccountsInListViewModel @Inject constructor(private val api: MastodonApi) : ViewModel() {
+class AccountsInListViewModel @Inject constructor(private val connectionManager: ConnectionManager) : ViewModel() {
 
     val state: Flow<State> get() = _state
     private val _state = MutableStateFlow(State(Right(listOf()), null))
+    private val api get() = connectionManager.mastodonApi
 
     fun load(listId: String) {
         val state = _state.value

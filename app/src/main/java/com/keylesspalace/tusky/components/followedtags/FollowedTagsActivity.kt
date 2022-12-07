@@ -15,6 +15,7 @@ import com.keylesspalace.tusky.R
 import com.keylesspalace.tusky.databinding.ActivityFollowedTagsBinding
 import com.keylesspalace.tusky.di.ViewModelFactory
 import com.keylesspalace.tusky.interfaces.HashtagActionListener
+import com.keylesspalace.tusky.network.ConnectionManager
 import com.keylesspalace.tusky.network.MastodonApi
 import com.keylesspalace.tusky.util.hide
 import com.keylesspalace.tusky.util.show
@@ -27,7 +28,7 @@ import javax.inject.Inject
 
 class FollowedTagsActivity : BaseActivity(), HashtagActionListener {
     @Inject
-    lateinit var api: MastodonApi
+    lateinit var connectionManager: ConnectionManager
 
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
@@ -91,7 +92,7 @@ class FollowedTagsActivity : BaseActivity(), HashtagActionListener {
 
     private fun follow(tagName: String, position: Int) {
         lifecycleScope.launch {
-            api.followTag(tagName).fold(
+            connectionManager.mastodonApi.followTag(tagName).fold(
                 {
                     viewModel.tags.add(position, it)
                     viewModel.currentSource?.invalidate()
@@ -111,7 +112,7 @@ class FollowedTagsActivity : BaseActivity(), HashtagActionListener {
 
     override fun unfollow(tagName: String, position: Int) {
         lifecycleScope.launch {
-            api.unfollowTag(tagName).fold(
+            connectionManager.mastodonApi.unfollowTag(tagName).fold(
                 {
                     viewModel.tags.removeAt(position)
                     Snackbar.make(

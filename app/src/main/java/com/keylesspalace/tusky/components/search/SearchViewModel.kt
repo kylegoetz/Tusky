@@ -25,7 +25,7 @@ import com.keylesspalace.tusky.db.AccountEntity
 import com.keylesspalace.tusky.db.AccountManager
 import com.keylesspalace.tusky.entity.DeletedStatus
 import com.keylesspalace.tusky.entity.Status
-import com.keylesspalace.tusky.network.MastodonApi
+import com.keylesspalace.tusky.network.ConnectionManager
 import com.keylesspalace.tusky.usecase.TimelineCases
 import com.keylesspalace.tusky.util.RxAwareViewModel
 import com.keylesspalace.tusky.util.toViewData
@@ -35,7 +35,7 @@ import io.reactivex.rxjava3.core.Single
 import javax.inject.Inject
 
 class SearchViewModel @Inject constructor(
-    mastodonApi: MastodonApi,
+    connectionManager: ConnectionManager,
     private val timelineCases: TimelineCases,
     private val accountManager: AccountManager
 ) : RxAwareViewModel() {
@@ -54,7 +54,7 @@ class SearchViewModel @Inject constructor(
 
     private val loadedStatuses: MutableList<StatusViewData.Concrete> = mutableListOf()
 
-    private val statusesPagingSourceFactory = SearchPagingSourceFactory(mastodonApi, SearchType.Status, loadedStatuses) {
+    private val statusesPagingSourceFactory = SearchPagingSourceFactory(connectionManager.mastodonApi, SearchType.Status, loadedStatuses) {
         it.statuses.map { status ->
             status.toViewData(
                 isShowingContent = alwaysShowSensitiveMedia || !status.actionableStatus.sensitive,
@@ -65,10 +65,10 @@ class SearchViewModel @Inject constructor(
             loadedStatuses.addAll(this)
         }
     }
-    private val accountsPagingSourceFactory = SearchPagingSourceFactory(mastodonApi, SearchType.Account) {
+    private val accountsPagingSourceFactory = SearchPagingSourceFactory(connectionManager.mastodonApi, SearchType.Account) {
         it.accounts
     }
-    private val hashtagsPagingSourceFactory = SearchPagingSourceFactory(mastodonApi, SearchType.Hashtag) {
+    private val hashtagsPagingSourceFactory = SearchPagingSourceFactory(connectionManager.mastodonApi, SearchType.Hashtag) {
         it.hashtags
     }
 

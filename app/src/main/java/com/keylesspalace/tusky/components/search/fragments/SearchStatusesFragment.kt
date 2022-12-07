@@ -498,7 +498,7 @@ class SearchStatusesFragment : SearchFragment<StatusViewData.Concrete>(), Status
 
     private fun editStatus(id: String, position: Int, status: Status) {
         lifecycleScope.launch {
-            mastodonApi.statusSource(id).fold(
+            connectionManager.mastodonApi.statusSource(id).fold(
                 { source ->
                     val composeOptions = ComposeOptions(
                         content = source.text,

@@ -12,6 +12,7 @@ import com.keylesspalace.tusky.components.timeline.mockStatusViewData
 import com.keylesspalace.tusky.db.AccountEntity
 import com.keylesspalace.tusky.db.AccountManager
 import com.keylesspalace.tusky.entity.StatusContext
+import com.keylesspalace.tusky.network.ConnectionManager
 import com.keylesspalace.tusky.network.FilterModel
 import com.keylesspalace.tusky.network.MastodonApi
 import com.keylesspalace.tusky.usecase.TimelineCases
@@ -33,6 +34,7 @@ import java.io.IOException
 class ViewThreadViewModelTest {
 
     private lateinit var api: MastodonApi
+    private lateinit var connectionManager: ConnectionManager
     private lateinit var eventHub: EventHub
     private lateinit var viewModel: ViewThreadViewModel
 
@@ -43,9 +45,12 @@ class ViewThreadViewModelTest {
         shadowOf(getMainLooper()).idle()
 
         api = mock()
+        connectionManager = mock {
+            on { mastodonApi } doReturn api
+        }
         eventHub = EventHub()
         val filterModel = FilterModel()
-        val timelineCases = TimelineCases(api, eventHub)
+        val timelineCases = TimelineCases(connectionManager, eventHub)
         val accountManager: AccountManager = mock {
             on { activeAccount } doReturn AccountEntity(
                 id = 1,
@@ -56,7 +61,7 @@ class ViewThreadViewModelTest {
                 isActive = true
             )
         }
-        viewModel = ViewThreadViewModel(api, filterModel, timelineCases, eventHub, accountManager)
+        viewModel = ViewThreadViewModel(connectionManager, filterModel, timelineCases, eventHub, accountManager)
     }
 
     @Test

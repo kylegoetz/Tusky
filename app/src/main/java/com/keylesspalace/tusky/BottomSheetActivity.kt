@@ -28,6 +28,7 @@ import autodispose2.autoDispose
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.keylesspalace.tusky.components.account.AccountActivity
 import com.keylesspalace.tusky.components.viewthread.ViewThreadActivity
+import com.keylesspalace.tusky.network.ConnectionManager
 import com.keylesspalace.tusky.network.MastodonApi
 import com.keylesspalace.tusky.util.looksLikeMastodonUrl
 import com.keylesspalace.tusky.util.openLink
@@ -45,7 +46,9 @@ abstract class BottomSheetActivity : BaseActivity() {
     var searchUrl: String? = null
 
     @Inject
-    lateinit var mastodonApi: MastodonApi
+    lateinit var connectionManager: ConnectionManager
+
+    val mastodonApi: MastodonApi get() = connectionManager.mastodonApi
 
     override fun onPostCreate(savedInstanceState: Bundle?) {
         super.onPostCreate(savedInstanceState)

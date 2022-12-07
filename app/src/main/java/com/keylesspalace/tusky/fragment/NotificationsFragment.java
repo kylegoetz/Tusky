@@ -618,7 +618,7 @@ public class NotificationsFragment extends SFragment implements
         updateAdapter();
 
         // Execute clear notifications request
-        mastodonApi.clearNotifications()
+        getMastodonApi().clearNotifications()
                 .observeOn(AndroidSchedulers.mainThread())
                 .to(autoDisposable(from(this, Lifecycle.Event.ON_DESTROY)))
                 .subscribe(
@@ -768,8 +768,8 @@ public class NotificationsFragment extends SFragment implements
     @Override
     public void onRespondToFollowRequest(boolean accept, String id, int position) {
         Single<Relationship> request = accept ?
-                mastodonApi.authorizeFollowRequest(id) :
-                mastodonApi.rejectFollowRequest(id);
+                getMastodonApi().authorizeFollowRequest(id) :
+                getMastodonApi().rejectFollowRequest(id);
         request.observeOn(AndroidSchedulers.mainThread())
                 .to(autoDisposable(from(this, Lifecycle.Event.ON_DESTROY)))
                 .subscribe(
@@ -897,7 +897,7 @@ public class NotificationsFragment extends SFragment implements
             bottomLoading = true;
         }
 
-        Disposable notificationCall = mastodonApi.notifications(fromId, uptoId, LOAD_AT_ONCE, showNotificationsFilter ? notificationFilter : null)
+        Disposable notificationCall = getMastodonApi().notifications(fromId, uptoId, LOAD_AT_ONCE, showNotificationsFilter ? notificationFilter : null)
                 .observeOn(AndroidSchedulers.mainThread())
                 .to(autoDisposable(from(this, Lifecycle.Event.ON_DESTROY)))
                 .subscribe(

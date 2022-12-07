@@ -28,10 +28,10 @@ import com.keylesspalace.tusky.db.DraftEntity
 import com.keylesspalace.tusky.entity.Attachment
 import com.keylesspalace.tusky.entity.NewPoll
 import com.keylesspalace.tusky.entity.Status
+import com.keylesspalace.tusky.network.ConnectionManager
 import com.keylesspalace.tusky.util.copyToFile
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import okhttp3.OkHttpClient
 import okhttp3.Request
 import okio.buffer
 import okio.sink
@@ -44,7 +44,7 @@ import javax.inject.Inject
 
 class DraftHelper @Inject constructor(
     val context: Context,
-    val okHttpClient: OkHttpClient,
+    private val clientManager: ConnectionManager,
     db: AppDatabase
 ) {
 
@@ -182,7 +182,7 @@ class DraftHelper @Inject constructor(
             try {
                 val request = Request.Builder().url(toString()).build()
 
-                val response = okHttpClient.newCall(request).execute()
+                val response = clientManager.getClient().newCall(request).execute()
 
                 val sink = file.sink().buffer()
 

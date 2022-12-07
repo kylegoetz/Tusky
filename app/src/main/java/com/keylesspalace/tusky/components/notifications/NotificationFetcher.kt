@@ -6,12 +6,12 @@ import com.keylesspalace.tusky.db.AccountEntity
 import com.keylesspalace.tusky.db.AccountManager
 import com.keylesspalace.tusky.entity.Marker
 import com.keylesspalace.tusky.entity.Notification
-import com.keylesspalace.tusky.network.MastodonApi
+import com.keylesspalace.tusky.network.ConnectionManager
 import com.keylesspalace.tusky.util.isLessThan
 import javax.inject.Inject
 
 class NotificationFetcher @Inject constructor(
-    private val mastodonApi: MastodonApi,
+    private val connectionManager: ConnectionManager,
     private val accountManager: AccountManager,
     private val context: Context
 ) {
@@ -39,7 +39,7 @@ class NotificationFetcher @Inject constructor(
             account.lastNotificationId = marker.lastReadId
         }
         Log.d(TAG, "getting Notifications for " + account.fullName)
-        val notifications = mastodonApi.notificationsWithAuth(
+        val notifications = connectionManager.mastodonApi.notificationsWithAuth(
             authHeader,
             account.domain,
             account.lastNotificationId
@@ -63,7 +63,7 @@ class NotificationFetcher @Inject constructor(
 
     private fun fetchMarker(authHeader: String, account: AccountEntity): Marker? {
         return try {
-            val allMarkers = mastodonApi.markersWithAuth(
+            val allMarkers = connectionManager.mastodonApi.markersWithAuth(
                 authHeader,
                 account.domain,
                 listOf("notifications")

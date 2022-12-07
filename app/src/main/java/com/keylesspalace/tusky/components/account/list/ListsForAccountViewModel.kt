@@ -23,6 +23,7 @@ import at.connyduck.calladapter.networkresult.onFailure
 import at.connyduck.calladapter.networkresult.onSuccess
 import at.connyduck.calladapter.networkresult.runCatching
 import com.keylesspalace.tusky.entity.MastoList
+import com.keylesspalace.tusky.network.ConnectionManager
 import com.keylesspalace.tusky.network.MastodonApi
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.async
@@ -51,9 +52,9 @@ data class ActionError(
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class ListsForAccountViewModel @Inject constructor(
-    private val mastodonApi: MastodonApi,
+    private val connectionManager: ConnectionManager,
 ) : ViewModel() {
-
+    private val mastodonApi: MastodonApi get() { return connectionManager.mastodonApi }
     private lateinit var accountId: String
 
     private val _states = MutableSharedFlow<List<AccountListState>>(1)

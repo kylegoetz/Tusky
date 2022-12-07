@@ -40,8 +40,8 @@ import com.keylesspalace.tusky.db.AccountManager
 import com.keylesspalace.tusky.db.AppDatabase
 import com.keylesspalace.tusky.db.TimelineStatusWithAccount
 import com.keylesspalace.tusky.entity.Poll
+import com.keylesspalace.tusky.network.ConnectionManager
 import com.keylesspalace.tusky.network.FilterModel
-import com.keylesspalace.tusky.network.MastodonApi
 import com.keylesspalace.tusky.usecase.TimelineCases
 import com.keylesspalace.tusky.util.EmptyPagingSource
 import com.keylesspalace.tusky.viewdata.StatusViewData
@@ -61,7 +61,7 @@ import kotlin.time.toDuration
  */
 class CachedTimelineViewModel @Inject constructor(
     timelineCases: TimelineCases,
-    private val api: MastodonApi,
+    private val connectionManager: ConnectionManager,
     eventHub: EventHub,
     accountManager: AccountManager,
     sharedPreferences: SharedPreferences,
@@ -70,13 +70,14 @@ class CachedTimelineViewModel @Inject constructor(
     private val gson: Gson
 ) : TimelineViewModel(
     timelineCases,
-    api,
+    connectionManager,
     eventHub,
     accountManager,
     sharedPreferences,
     filterModel
 ) {
 
+    private val api get() = connectionManager.mastodonApi
     private var currentPagingSource: PagingSource<Int, TimelineStatusWithAccount>? = null
 
     @OptIn(ExperimentalPagingApi::class)

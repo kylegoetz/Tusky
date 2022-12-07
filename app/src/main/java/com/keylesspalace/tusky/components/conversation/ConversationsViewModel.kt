@@ -25,7 +25,7 @@ import androidx.paging.cachedIn
 import androidx.paging.map
 import com.keylesspalace.tusky.db.AccountManager
 import com.keylesspalace.tusky.db.AppDatabase
-import com.keylesspalace.tusky.network.MastodonApi
+import com.keylesspalace.tusky.network.ConnectionManager
 import com.keylesspalace.tusky.usecase.TimelineCases
 import com.keylesspalace.tusky.util.EmptyPagingSource
 import kotlinx.coroutines.flow.map
@@ -37,13 +37,13 @@ class ConversationsViewModel @Inject constructor(
     private val timelineCases: TimelineCases,
     private val database: AppDatabase,
     private val accountManager: AccountManager,
-    private val api: MastodonApi
+    private val connectionManager: ConnectionManager
 ) : ViewModel() {
 
     @OptIn(ExperimentalPagingApi::class)
     val conversationFlow = Pager(
         config = PagingConfig(pageSize = 30),
-        remoteMediator = ConversationsRemoteMediator(api, database, accountManager),
+        remoteMediator = ConversationsRemoteMediator(connectionManager, database, accountManager),
         pagingSourceFactory = {
             val activeAccount = accountManager.activeAccount
             if (activeAccount == null) {
@@ -142,7 +142,7 @@ class ConversationsViewModel @Inject constructor(
     fun remove(conversation: ConversationViewData) {
         viewModelScope.launch {
             try {
-                api.deleteConversation(conversationId = conversation.id)
+                connectionManager.mastodonApi.deleteConversation(conversationId = conversation.id)
 
                 database.conversationDao().delete(
                     id = conversation.id,

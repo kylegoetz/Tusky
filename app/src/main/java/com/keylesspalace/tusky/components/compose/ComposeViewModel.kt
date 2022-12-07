@@ -32,7 +32,7 @@ import com.keylesspalace.tusky.entity.Attachment
 import com.keylesspalace.tusky.entity.Emoji
 import com.keylesspalace.tusky.entity.NewPoll
 import com.keylesspalace.tusky.entity.Status
-import com.keylesspalace.tusky.network.MastodonApi
+import com.keylesspalace.tusky.network.ConnectionManager
 import com.keylesspalace.tusky.service.ServiceClient
 import com.keylesspalace.tusky.service.StatusToSend
 import com.keylesspalace.tusky.util.randomAlphanumericString
@@ -57,7 +57,7 @@ import javax.inject.Inject
 
 @OptIn(FlowPreview::class)
 class ComposeViewModel @Inject constructor(
-    private val api: MastodonApi,
+    private val connectionManager: ConnectionManager,
     private val accountManager: AccountManager,
     private val mediaUploader: MediaUploader,
     private val serviceClient: ServiceClient,
@@ -65,6 +65,7 @@ class ComposeViewModel @Inject constructor(
     instanceInfoRepo: InstanceInfoRepository
 ) : ViewModel() {
 
+    private val api get() = connectionManager.mastodonApi
     private var replyingStatusAuthor: String? = null
     private var replyingStatusContent: String? = null
     internal var startingText: String? = null

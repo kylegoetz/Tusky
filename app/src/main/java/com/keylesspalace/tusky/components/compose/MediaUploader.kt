@@ -28,7 +28,7 @@ import com.keylesspalace.tusky.BuildConfig
 import com.keylesspalace.tusky.R
 import com.keylesspalace.tusky.components.compose.ComposeActivity.QueuedMedia
 import com.keylesspalace.tusky.components.instanceinfo.InstanceInfo
-import com.keylesspalace.tusky.network.MediaUploadApi
+import com.keylesspalace.tusky.network.ConnectionManager
 import com.keylesspalace.tusky.network.ProgressRequestBody
 import com.keylesspalace.tusky.util.MEDIA_SIZE_UNKNOWN
 import com.keylesspalace.tusky.util.getImageSquarePixels
@@ -78,7 +78,7 @@ class UploadServerError(val errorMessage: String) : Exception()
 
 class MediaUploader @Inject constructor(
     private val context: Context,
-    private val mediaUploadApi: MediaUploadApi
+    private val connectionManager: ConnectionManager
 ) {
 
     @OptIn(ExperimentalCoroutinesApi::class)
@@ -230,8 +230,7 @@ class MediaUploader @Inject constructor(
             } else {
                 null
             }
-
-            mediaUploadApi.uploadMedia(body, description, focus).fold({ result ->
+            connectionManager.mediaUploaderApi.uploadMedia(body, description, focus).fold({ result ->
                 send(UploadEvent.FinishedEvent(result.id))
             }, { throwable ->
                 val errorMessage = throwable.getServerErrorMessage()

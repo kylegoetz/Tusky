@@ -12,7 +12,7 @@ import com.keylesspalace.tusky.appstore.EventHub
 import com.keylesspalace.tusky.appstore.PreferenceChangedEvent
 import com.keylesspalace.tusky.databinding.ActivityFiltersBinding
 import com.keylesspalace.tusky.entity.Filter
-import com.keylesspalace.tusky.network.MastodonApi
+import com.keylesspalace.tusky.network.ConnectionManager
 import com.keylesspalace.tusky.util.hide
 import com.keylesspalace.tusky.util.show
 import com.keylesspalace.tusky.util.viewBinding
@@ -25,7 +25,7 @@ import javax.inject.Inject
 
 class FiltersActivity : BaseActivity() {
     @Inject
-    lateinit var api: MastodonApi
+    lateinit var connectionManager: ConnectionManager
 
     @Inject
     lateinit var eventHub: EventHub
@@ -56,7 +56,7 @@ class FiltersActivity : BaseActivity() {
 
     fun updateFilter(id: String, phrase: String, filterContext: List<String>, irreversible: Boolean, wholeWord: Boolean, expiresInSeconds: Int?, itemIndex: Int) {
         lifecycleScope.launch {
-            api.updateFilter(id, phrase, filterContext, irreversible, wholeWord, expiresInSeconds).fold(
+            connectionManager.mastodonApi.updateFilter(id, phrase, filterContext, irreversible, wholeWord, expiresInSeconds).fold(
                 { updatedFilter ->
                     if (updatedFilter.context.contains(context)) {
                         filters[itemIndex] = updatedFilter
@@ -78,7 +78,7 @@ class FiltersActivity : BaseActivity() {
         if (filter.context.size == 1) {
             lifecycleScope.launch {
                 // This is the only context for this filter; delete it
-                api.deleteFilter(filters[itemIndex].id).fold(
+                connectionManager.mastodonApi.deleteFilter(filters[itemIndex].id).fold(
                     {
                         filters.removeAt(itemIndex)
                         refreshFilterDisplay()
@@ -105,7 +105,7 @@ class FiltersActivity : BaseActivity() {
 
     fun createFilter(phrase: String, wholeWord: Boolean, expiresInSeconds: Int? = null) {
         lifecycleScope.launch {
-            api.createFilter(phrase, listOf(context), false, wholeWord, expiresInSeconds).fold(
+            connectionManager.mastodonApi.createFilter(phrase, listOf(context), false, wholeWord, expiresInSeconds).fold(
                 { filter ->
                     filters.add(filter)
                     refreshFilterDisplay()
@@ -150,7 +150,7 @@ class FiltersActivity : BaseActivity() {
         binding.filterProgressBar.show()
 
         lifecycleScope.launch {
-            val newFilters = api.getFilters().getOrElse {
+            val newFilters = connectionManager.mastodonApi.getFilters().getOrElse {
                 binding.filterProgressBar.hide()
                 binding.filterMessageView.show()
                 if (it is IOException) {

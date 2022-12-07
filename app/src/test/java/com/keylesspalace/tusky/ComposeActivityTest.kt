@@ -33,6 +33,7 @@ import com.keylesspalace.tusky.di.ViewModelFactory
 import com.keylesspalace.tusky.entity.Instance
 import com.keylesspalace.tusky.entity.InstanceConfiguration
 import com.keylesspalace.tusky.entity.StatusConfiguration
+import com.keylesspalace.tusky.network.ConnectionManager
 import com.keylesspalace.tusky.network.MastodonApi
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -60,6 +61,7 @@ class ComposeActivityTest {
     private lateinit var activity: ComposeActivity
     private lateinit var accountManagerMock: AccountManager
     private lateinit var apiMock: MastodonApi
+    private lateinit var connectionManagerMock: ConnectionManager
 
     private val instanceDomain = "example.domain"
 
@@ -107,6 +109,10 @@ class ComposeActivityTest {
             }
         }
 
+        connectionManagerMock = mock {
+            on { mastodonApi } doReturn apiMock
+        }
+
         val instanceDaoMock: InstanceDao = mock {
             onBlocking { getInstanceInfo(any()) } doReturn
                 InstanceInfoEntity(instanceDomain, null, null, null, null, null, null, null, null, null, null, null, null, null, null)
@@ -118,10 +124,10 @@ class ComposeActivityTest {
             on { instanceDao() } doReturn instanceDaoMock
         }
 
-        val instanceInfoRepo = InstanceInfoRepository(apiMock, dbMock, accountManagerMock)
+        val instanceInfoRepo = InstanceInfoRepository(connectionManagerMock, dbMock, accountManagerMock)
 
         val viewModel = ComposeViewModel(
-            apiMock,
+            connectionManagerMock,
             accountManagerMock,
             mock(),
             mock(),

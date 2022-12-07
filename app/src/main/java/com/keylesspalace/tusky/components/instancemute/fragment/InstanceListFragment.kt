@@ -16,7 +16,7 @@ import com.keylesspalace.tusky.components.instancemute.adapter.DomainMutesAdapte
 import com.keylesspalace.tusky.components.instancemute.interfaces.InstanceActionListener
 import com.keylesspalace.tusky.databinding.FragmentInstanceListBinding
 import com.keylesspalace.tusky.di.Injectable
-import com.keylesspalace.tusky.network.MastodonApi
+import com.keylesspalace.tusky.network.ConnectionManager
 import com.keylesspalace.tusky.util.HttpHeaderLink
 import com.keylesspalace.tusky.util.hide
 import com.keylesspalace.tusky.util.show
@@ -32,7 +32,8 @@ import javax.inject.Inject
 class InstanceListFragment : Fragment(R.layout.fragment_instance_list), Injectable, InstanceActionListener {
 
     @Inject
-    lateinit var api: MastodonApi
+    lateinit var connectionManager: ConnectionManager
+    private val api get() = connectionManager.mastodonApi
 
     private val binding by viewBinding(FragmentInstanceListBinding::bind)
 

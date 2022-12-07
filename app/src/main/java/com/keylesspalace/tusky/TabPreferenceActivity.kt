@@ -44,7 +44,7 @@ import com.keylesspalace.tusky.appstore.EventHub
 import com.keylesspalace.tusky.appstore.MainTabsChangedEvent
 import com.keylesspalace.tusky.databinding.ActivityTabPreferenceBinding
 import com.keylesspalace.tusky.di.Injectable
-import com.keylesspalace.tusky.network.MastodonApi
+import com.keylesspalace.tusky.network.ConnectionManager
 import com.keylesspalace.tusky.util.onTextChanged
 import com.keylesspalace.tusky.util.viewBinding
 import com.keylesspalace.tusky.util.visible
@@ -57,7 +57,7 @@ import javax.inject.Inject
 class TabPreferenceActivity : BaseActivity(), Injectable, ItemInteractionListener {
 
     @Inject
-    lateinit var mastodonApi: MastodonApi
+    lateinit var connectionManager: ConnectionManager
     @Inject
     lateinit var eventHub: EventHub
 
@@ -266,7 +266,7 @@ class TabPreferenceActivity : BaseActivity(), Injectable, ItemInteractionListene
     private fun showSelectListDialog() {
         val adapter = ListSelectionAdapter(this)
         lifecycleScope.launch {
-            mastodonApi.getLists().fold(
+            connectionManager.mastodonApi.getLists().fold(
                 { lists ->
                     adapter.addAll(lists)
                 },

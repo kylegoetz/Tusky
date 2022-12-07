@@ -29,7 +29,7 @@ import com.keylesspalace.tusky.appstore.StatusDeletedEvent
 import com.keylesspalace.tusky.entity.DeletedStatus
 import com.keylesspalace.tusky.entity.Poll
 import com.keylesspalace.tusky.entity.Status
-import com.keylesspalace.tusky.network.MastodonApi
+import com.keylesspalace.tusky.network.ConnectionManager
 import com.keylesspalace.tusky.util.getServerErrorMessage
 import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.disposables.CompositeDisposable
@@ -41,9 +41,11 @@ import javax.inject.Inject
  */
 
 class TimelineCases @Inject constructor(
-    private val mastodonApi: MastodonApi,
+    private val connectionManager: ConnectionManager,
     private val eventHub: EventHub
 ) {
+
+    private val mastodonApi get() = connectionManager.mastodonApi
 
     /**
      * Unused yet but can be use for cancellation later. It's always a good idea to save

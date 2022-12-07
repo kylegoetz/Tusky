@@ -22,6 +22,7 @@ import com.keylesspalace.tusky.databinding.FragmentSearchBinding
 import com.keylesspalace.tusky.di.Injectable
 import com.keylesspalace.tusky.di.ViewModelFactory
 import com.keylesspalace.tusky.interfaces.LinkListener
+import com.keylesspalace.tusky.network.ConnectionManager
 import com.keylesspalace.tusky.network.MastodonApi
 import com.keylesspalace.tusky.util.viewBinding
 import com.keylesspalace.tusky.util.visible
@@ -40,7 +41,8 @@ abstract class SearchFragment<T : Any> :
     lateinit var viewModelFactory: ViewModelFactory
 
     @Inject
-    lateinit var mastodonApi: MastodonApi
+    lateinit var connectionManager: ConnectionManager
+    private val mastodonApi: MastodonApi get() { return connectionManager.mastodonApi }
 
     protected val viewModel: SearchViewModel by activityViewModels { viewModelFactory }
 

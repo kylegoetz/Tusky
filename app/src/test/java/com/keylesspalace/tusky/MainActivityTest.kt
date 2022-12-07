@@ -4,6 +4,7 @@ import android.app.Activity
 import android.app.NotificationManager
 import android.content.ComponentName
 import android.content.Intent
+import android.os.Build
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.viewpager2.widget.ViewPager2
@@ -15,6 +16,7 @@ import com.keylesspalace.tusky.db.AccountEntity
 import com.keylesspalace.tusky.entity.Account
 import com.keylesspalace.tusky.entity.Notification
 import com.keylesspalace.tusky.entity.TimelineAccount
+import com.keylesspalace.tusky.network.MastodonApi
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Before
@@ -79,7 +81,12 @@ class MainActivityTest {
 
         assertNotNull(nextActivity)
         assertEquals(ComponentName(context, AccountListActivity::class.java.name), nextActivity.component)
-        assertEquals(AccountListActivity.Type.FOLLOW_REQUESTS, nextActivity.getSerializableExtra("type"))
+        val serializable = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            nextActivity.getSerializableExtra("type", AccountListActivity.Type::class.java)
+        } else {
+            @Suppress("DEPRECATION") nextActivity.getSerializableExtra("type")
+        }
+        assertEquals(AccountListActivity.Type.FOLLOW_REQUESTS, serializable)
     }
 
     private fun showNotification(type: Notification.Type): Intent {
@@ -121,9 +128,12 @@ class MainActivityTest {
         activity.accountManager = mock {
             on { activeAccount } doReturn accountEntity
         }
-        activity.mastodonApi = mock {
+        val mockedMastodonApi: MastodonApi = mock {
             onBlocking { accountVerifyCredentials() } doReturn NetworkResult.success(account)
             onBlocking { listAnnouncements(false) } doReturn NetworkResult.success(emptyList())
+        }
+        activity.connectionManager = mock {
+            on { mastodonApi } doReturn mockedMastodonApi
         }
         controller.create().start()
         return activity

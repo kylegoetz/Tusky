@@ -24,7 +24,7 @@ import com.keylesspalace.tusky.components.notifications.canEnablePushNotificatio
 import com.keylesspalace.tusky.components.notifications.isUnifiedPushNotificationEnabledForAccount
 import com.keylesspalace.tusky.components.notifications.updateUnifiedPushSubscription
 import com.keylesspalace.tusky.db.AccountManager
-import com.keylesspalace.tusky.network.MastodonApi
+import com.keylesspalace.tusky.network.ConnectionManager
 import dagger.android.AndroidInjection
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
@@ -34,7 +34,8 @@ import javax.inject.Inject
 @DelicateCoroutinesApi
 class NotificationBlockStateBroadcastReceiver : BroadcastReceiver() {
     @Inject
-    lateinit var mastodonApi: MastodonApi
+    lateinit var connectionManager: ConnectionManager
+    private val mastodonApi get() = connectionManager.mastodonApi
 
     @Inject
     lateinit var accountManager: AccountManager

@@ -20,7 +20,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import at.connyduck.calladapter.networkresult.fold
 import com.keylesspalace.tusky.entity.MastoList
-import com.keylesspalace.tusky.network.MastodonApi
+import com.keylesspalace.tusky.network.ConnectionManager
 import com.keylesspalace.tusky.util.replacedFirstWhich
 import com.keylesspalace.tusky.util.withoutFirstWhich
 import kotlinx.coroutines.channels.BufferOverflow
@@ -32,7 +32,7 @@ import java.io.IOException
 import java.net.ConnectException
 import javax.inject.Inject
 
-internal class ListsViewModel @Inject constructor(private val api: MastodonApi) : ViewModel() {
+internal class ListsViewModel @Inject constructor(private val connectionManager: ConnectionManager) : ViewModel() {
     enum class LoadingState {
         INITIAL, LOADING, LOADED, ERROR_NETWORK, ERROR_OTHER
     }
@@ -47,6 +47,7 @@ internal class ListsViewModel @Inject constructor(private val api: MastodonApi) 
     val events: Flow<Event> get() = _events
     private val _state = MutableStateFlow(State(listOf(), LoadingState.INITIAL))
     private val _events = MutableSharedFlow<Event>(replay = 0, extraBufferCapacity = 1, onBufferOverflow = BufferOverflow.DROP_OLDEST)
+    private val api get() = connectionManager.mastodonApi
 
     fun retryLoading() {
         loadIfNeeded()

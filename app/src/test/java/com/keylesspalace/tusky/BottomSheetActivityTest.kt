@@ -19,6 +19,7 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.keylesspalace.tusky.entity.SearchResult
 import com.keylesspalace.tusky.entity.Status
 import com.keylesspalace.tusky.entity.TimelineAccount
+import com.keylesspalace.tusky.network.ConnectionManager
 import com.keylesspalace.tusky.network.MastodonApi
 import io.reactivex.rxjava3.android.plugins.RxAndroidPlugins
 import io.reactivex.rxjava3.core.Single
@@ -44,6 +45,7 @@ class BottomSheetActivityTest {
 
     private lateinit var activity: FakeBottomSheetActivity
     private lateinit var apiMock: MastodonApi
+    private lateinit var connectionManager: ConnectionManager
     private val accountQuery = "http://mastodon.foo.bar/@User"
     private val statusQuery = "http://mastodon.foo.bar/@User/345678"
     private val nonMastodonQuery = "http://medium.com/@correspondent/345678"
@@ -103,8 +105,11 @@ class BottomSheetActivityTest {
             on { searchObservable(eq(statusQuery), eq(null), anyBoolean(), eq(null), eq(null), eq(null)) } doReturn statusSingle
             on { searchObservable(eq(nonMastodonQuery), eq(null), anyBoolean(), eq(null), eq(null), eq(null)) } doReturn emptyCallback
         }
+        connectionManager = mock {
+            on { mastodonApi } doReturn(apiMock)
+        }
 
-        activity = FakeBottomSheetActivity(apiMock)
+        activity = FakeBottomSheetActivity(connectionManager)
     }
 
     @Test
@@ -228,7 +233,7 @@ class BottomSheetActivityTest {
         assertEquals(null, activity.accountId)
     }
 
-    class FakeBottomSheetActivity(api: MastodonApi) : BottomSheetActivity() {
+    class FakeBottomSheetActivity(connectionMgr: ConnectionManager) : BottomSheetActivity() {
 
         var statusId: String? = null
         var accountId: String? = null
@@ -236,7 +241,7 @@ class BottomSheetActivityTest {
         var fallbackBehavior: PostLookupFallbackBehavior? = null
 
         init {
-            mastodonApi = api
+            connectionManager = connectionMgr
             @Suppress("UNCHECKED_CAST")
             bottomSheet = mock()
         }

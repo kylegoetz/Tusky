@@ -35,6 +35,7 @@ import com.keylesspalace.tusky.R
 import com.keylesspalace.tusky.databinding.ActivityLoginBinding
 import com.keylesspalace.tusky.di.Injectable
 import com.keylesspalace.tusky.entity.AccessToken
+import com.keylesspalace.tusky.network.ConnectionManager
 import com.keylesspalace.tusky.network.MastodonApi
 import com.keylesspalace.tusky.util.getNonNullString
 import com.keylesspalace.tusky.util.rickRoll
@@ -48,7 +49,8 @@ import javax.inject.Inject
 class LoginActivity : BaseActivity(), Injectable {
 
     @Inject
-    lateinit var mastodonApi: MastodonApi
+    lateinit var connectionManager: ConnectionManager
+    val mastodonApi get() = connectionManager.mastodonApi
 
     private val binding by viewBinding(ActivityLoginBinding::inflate)
 
@@ -174,6 +176,7 @@ class LoginActivity : BaseActivity(), Injectable {
         setLoading(true)
 
         lifecycleScope.launch {
+            connectionManager.apiDomain = domain
             mastodonApi.authenticateApp(
                 domain, getString(R.string.app_name), oauthRedirectUri,
                 OAUTH_SCOPES, getString(R.string.tusky_website)

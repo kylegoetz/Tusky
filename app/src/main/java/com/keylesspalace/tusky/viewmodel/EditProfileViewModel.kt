@@ -28,7 +28,7 @@ import com.keylesspalace.tusky.components.instanceinfo.InstanceInfo
 import com.keylesspalace.tusky.components.instanceinfo.InstanceInfoRepository
 import com.keylesspalace.tusky.entity.Account
 import com.keylesspalace.tusky.entity.StringField
-import com.keylesspalace.tusky.network.MastodonApi
+import com.keylesspalace.tusky.network.ConnectionManager
 import com.keylesspalace.tusky.util.Error
 import com.keylesspalace.tusky.util.Loading
 import com.keylesspalace.tusky.util.Resource
@@ -53,11 +53,13 @@ private const val HEADER_FILE_NAME = "header.png"
 private const val AVATAR_FILE_NAME = "avatar.png"
 
 class EditProfileViewModel @Inject constructor(
-    private val mastodonApi: MastodonApi,
+    private val connectionManager: ConnectionManager,
     private val eventHub: EventHub,
     private val application: Application,
     private val instanceInfoRepo: InstanceInfoRepository
 ) : ViewModel() {
+
+    private val mastodonApi get() = connectionManager.mastodonApi
 
     val profileData = MutableLiveData<Resource<Account>>()
     val avatarData = MutableLiveData<Uri>()

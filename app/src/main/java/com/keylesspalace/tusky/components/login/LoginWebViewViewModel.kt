@@ -19,13 +19,13 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import at.connyduck.calladapter.networkresult.fold
-import com.keylesspalace.tusky.network.MastodonApi
+import com.keylesspalace.tusky.network.ConnectionManager
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class LoginWebViewViewModel @Inject constructor(
-    private val api: MastodonApi
+    private val connectionManager: ConnectionManager
 ) : ViewModel() {
 
     val instanceRules: MutableStateFlow<List<String>> = MutableStateFlow(emptyList())
@@ -36,7 +36,7 @@ class LoginWebViewViewModel @Inject constructor(
         if (this.domain == null) {
             this.domain = domain
             viewModelScope.launch {
-                api.getInstance(domain).fold({ instance ->
+                connectionManager.mastodonApi.getInstance().fold({ instance ->
                     instanceRules.value = instance.rules?.map { rule -> rule.text }.orEmpty()
                 }, { throwable ->
                     Log.w("LoginWebViewViewModel", "failed to load instance info", throwable)

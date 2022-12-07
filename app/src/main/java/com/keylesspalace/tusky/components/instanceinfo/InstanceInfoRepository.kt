@@ -24,17 +24,17 @@ import com.keylesspalace.tusky.db.AppDatabase
 import com.keylesspalace.tusky.db.EmojisEntity
 import com.keylesspalace.tusky.db.InstanceInfoEntity
 import com.keylesspalace.tusky.entity.Emoji
-import com.keylesspalace.tusky.network.MastodonApi
+import com.keylesspalace.tusky.network.ConnectionManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class InstanceInfoRepository @Inject constructor(
-    private val api: MastodonApi,
+    private val connectionManager: ConnectionManager,
     db: AppDatabase,
     accountManager: AccountManager
 ) {
-
+    private val api get() = connectionManager.mastodonApi
     private val dao = db.instanceDao()
     private val instanceName = accountManager.activeAccount!!.domain
 

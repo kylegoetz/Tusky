@@ -40,7 +40,7 @@ import com.keylesspalace.tusky.di.Injectable
 import com.keylesspalace.tusky.entity.Account
 import com.keylesspalace.tusky.entity.Filter
 import com.keylesspalace.tusky.entity.Status
-import com.keylesspalace.tusky.network.MastodonApi
+import com.keylesspalace.tusky.network.ConnectionManager
 import com.keylesspalace.tusky.settings.PrefKeys
 import com.keylesspalace.tusky.settings.listPreference
 import com.keylesspalace.tusky.settings.makePreferenceScreen
@@ -66,7 +66,8 @@ class AccountPreferencesFragment : PreferenceFragmentCompat(), Injectable {
     lateinit var accountManager: AccountManager
 
     @Inject
-    lateinit var mastodonApi: MastodonApi
+    lateinit var connectionManager: ConnectionManager
+    val mastodonApi get() = connectionManager.mastodonApi
 
     @Inject
     lateinit var eventHub: EventHub

@@ -29,7 +29,7 @@ import com.keylesspalace.tusky.components.report.adapter.StatusesPagingSource
 import com.keylesspalace.tusky.components.report.model.StatusViewState
 import com.keylesspalace.tusky.entity.Relationship
 import com.keylesspalace.tusky.entity.Status
-import com.keylesspalace.tusky.network.MastodonApi
+import com.keylesspalace.tusky.network.ConnectionManager
 import com.keylesspalace.tusky.util.Error
 import com.keylesspalace.tusky.util.Loading
 import com.keylesspalace.tusky.util.Resource
@@ -46,10 +46,11 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class ReportViewModel @Inject constructor(
-    private val mastodonApi: MastodonApi,
+    private val connectionManager: ConnectionManager,
     private val eventHub: EventHub
 ) : RxAwareViewModel() {
 
+    private val mastodonApi get() = connectionManager.mastodonApi
     private val navigationMutable = MutableLiveData<Screen?>()
     val navigation: LiveData<Screen?> = navigationMutable
 

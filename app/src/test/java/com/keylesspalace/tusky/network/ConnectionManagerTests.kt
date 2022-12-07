@@ -1,27 +1,18 @@
 package com.keylesspalace.tusky.network
 
-import android.content.Context
 import android.content.SharedPreferences
-import androidx.test.platform.app.InstrumentationRegistry
 import com.google.gson.Gson
-import com.keylesspalace.tusky.R
 import com.keylesspalace.tusky.db.AccountManager
 import com.keylesspalace.tusky.settings.PrefKeys
 import com.keylesspalace.tusky.settings.PrefKeys.DOMAIN
-import com.keylesspalace.tusky.util.getNonNullString
-import okhttp3.mockwebserver.MockWebServer
-import org.junit.After
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.mockito.ArgumentMatchers.anyBoolean
 import org.mockito.ArgumentMatchers.anyString
-import org.mockito.kotlin.any
-//import org.mockito.ArgumentMatchers.anyString
 import org.mockito.ArgumentMatchers.eq
-import org.mockito.kotlin.mock
 import org.mockito.kotlin.doReturn
+import org.mockito.kotlin.mock
 import org.mockito.kotlin.verify
 import java.io.File
 
@@ -65,5 +56,4 @@ class ConnectionManagerTests {
         connectionManager = ConnectionManagerImpl(accountManager, File(""), sharedPreferences, gson)
         assertEquals("$domain:$port", connectionManager.getClient().proxy?.address().toString())
     }
-
 }

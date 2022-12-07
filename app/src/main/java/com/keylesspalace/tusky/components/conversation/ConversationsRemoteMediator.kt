@@ -7,13 +7,13 @@ import androidx.paging.RemoteMediator
 import androidx.room.withTransaction
 import com.keylesspalace.tusky.db.AccountManager
 import com.keylesspalace.tusky.db.AppDatabase
-import com.keylesspalace.tusky.network.MastodonApi
+import com.keylesspalace.tusky.network.ConnectionManager
 import com.keylesspalace.tusky.util.HttpHeaderLink
 import retrofit2.HttpException
 
 @OptIn(ExperimentalPagingApi::class)
 class ConversationsRemoteMediator(
-    private val api: MastodonApi,
+    private val connectionManager: ConnectionManager,
     private val db: AppDatabase,
     accountManager: AccountManager,
 ) : RemoteMediator<Int, ConversationEntity>() {
@@ -39,7 +39,7 @@ class ConversationsRemoteMediator(
         }
 
         try {
-            val conversationsResponse = api.getConversations(maxId = nextKey, limit = state.config.pageSize)
+            val conversationsResponse = connectionManager.mastodonApi.getConversations(maxId = nextKey, limit = state.config.pageSize)
 
             val conversations = conversationsResponse.body()
             if (!conversationsResponse.isSuccessful || conversations == null) {

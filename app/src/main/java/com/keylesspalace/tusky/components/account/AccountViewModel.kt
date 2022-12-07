@@ -11,7 +11,7 @@ import com.keylesspalace.tusky.appstore.UnfollowEvent
 import com.keylesspalace.tusky.db.AccountManager
 import com.keylesspalace.tusky.entity.Account
 import com.keylesspalace.tusky.entity.Relationship
-import com.keylesspalace.tusky.network.MastodonApi
+import com.keylesspalace.tusky.network.ConnectionManager
 import com.keylesspalace.tusky.util.Error
 import com.keylesspalace.tusky.util.Loading
 import com.keylesspalace.tusky.util.Resource
@@ -26,11 +26,11 @@ import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 class AccountViewModel @Inject constructor(
-    private val mastodonApi: MastodonApi,
+    private val connectionManager: ConnectionManager,
     private val eventHub: EventHub,
     private val accountManager: AccountManager
 ) : RxAwareViewModel() {
-
+    val mastodonApi get() = connectionManager.mastodonApi
     val accountData = MutableLiveData<Resource<Account>>()
     val relationshipData = MutableLiveData<Resource<Relationship>>()
 

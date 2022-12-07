@@ -32,8 +32,8 @@ import com.keylesspalace.tusky.components.timeline.util.ifExpected
 import com.keylesspalace.tusky.db.AccountManager
 import com.keylesspalace.tusky.entity.Filter
 import com.keylesspalace.tusky.entity.Status
+import com.keylesspalace.tusky.network.ConnectionManager
 import com.keylesspalace.tusky.network.FilterModel
-import com.keylesspalace.tusky.network.MastodonApi
 import com.keylesspalace.tusky.usecase.TimelineCases
 import com.keylesspalace.tusky.util.toViewData
 import com.keylesspalace.tusky.viewdata.StatusViewData
@@ -50,12 +50,14 @@ import kotlinx.coroutines.rx3.await
 import javax.inject.Inject
 
 class ViewThreadViewModel @Inject constructor(
-    private val api: MastodonApi,
+    private val connectionManager: ConnectionManager,
     private val filterModel: FilterModel,
     private val timelineCases: TimelineCases,
     eventHub: EventHub,
     accountManager: AccountManager
 ) : ViewModel() {
+
+    private val api get() = connectionManager.mastodonApi
 
     private val _uiState: MutableStateFlow<ThreadUiState> = MutableStateFlow(ThreadUiState.Loading)
     val uiState: Flow<ThreadUiState>

@@ -1,10 +1,8 @@
 package com.keylesspalace.tusky.network
 
-import android.content.Context
 import android.content.SharedPreferences
 import android.os.Build
 import at.connyduck.calladapter.networkresult.NetworkResultCallAdapterFactory
-import at.connyduck.calladapter.networkresult.map
 import com.google.gson.Gson
 import com.keylesspalace.tusky.BuildConfig
 import com.keylesspalace.tusky.db.AccountManager
@@ -15,8 +13,6 @@ import okhttp3.Cache
 import okhttp3.Interceptor
 import okhttp3.OkHttp
 import okhttp3.OkHttpClient
-import okhttp3.Request
-import okhttp3.Response
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava3.RxJava3CallAdapterFactory
@@ -29,21 +25,30 @@ import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import javax.inject.Singleton
 
+interface ConnectionManager {
+    var apiDomain: String
+    val mastodonApi: MastodonApi
+    val mediaUploaderApi: MediaUploadApi
+    fun getClient(): OkHttpClient
+}
+
 @Singleton
-class ConnectionManager @Inject constructor(
+class ConnectionManagerImpl @Inject constructor(
     private val accountManager: AccountManager,
     private val cacheDir: File,
     private val preferences: SharedPreferences,
     private val gson: Gson
-) {
+) : ConnectionManager {
 
     private val accessTokenInterceptor = Interceptor { chain ->
         val token = accountManager.activeAccount?.accessToken
         if (chain.request().url.host == apiDomain && token != null) {
-            chain.proceed(chain.request().newBuilder().header(
-                "Authorization",
-                "Bearer %s".format(token)
-            ).build())
+            chain.proceed(
+                chain.request().newBuilder().header(
+                    "Authorization",
+                    "Bearer %s".format(token)
+                ).build()
+            )
         } else chain.proceed(chain.request())
     }
     private val retrofit: Retrofit
@@ -55,18 +60,18 @@ class ConnectionManager @Inject constructor(
                 .addCallAdapterFactory(NetworkResultCallAdapterFactory.create())
                 .build()
 
-    var apiDomain = preferences.getNonNullString(DOMAIN, MastodonApi.PLACEHOLDER_DOMAIN)
+    override var apiDomain = preferences.getNonNullString(DOMAIN, MastodonApi.PLACEHOLDER_DOMAIN)
         set(value) {
             preferences.edit().putString(DOMAIN, value).apply()
             field = value
         }
 
-    private val apiBaseUrl get() = "https://${apiDomain}"
+    private val apiBaseUrl get() = "https://$apiDomain"
 
-    val mastodonApi get() = retrofit.create<MastodonApi>()
+    override val mastodonApi get() = retrofit.create<MastodonApi>()
     val api get() = mastodonApi
 
-    val mediaUploaderApi: MediaUploadApi
+    override val mediaUploaderApi: MediaUploadApi
         get() {
             val longTimeOutOkHttpClient = getClient().newBuilder()
                 .readTimeout(100, TimeUnit.SECONDS)
@@ -79,7 +84,7 @@ class ConnectionManager @Inject constructor(
                 .create()
         }
 
-    fun getClient(): OkHttpClient {
+    override fun getClient(): OkHttpClient {
         val httpProxyEnabled = preferences.getBoolean(PrefKeys.HTTP_PROXY_ENABLED, false)
         val httpServer = preferences.getNonNullString(PrefKeys.HTTP_PROXY_SERVER, "")
         val httpPort = preferences.getNonNullString(PrefKeys.HTTP_PROXY_PORT, "-1").toIntOrNull() ?: -1

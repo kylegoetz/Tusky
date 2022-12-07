@@ -38,8 +38,8 @@ import com.keylesspalace.tusky.components.timeline.util.ifExpected
 import com.keylesspalace.tusky.db.AccountManager
 import com.keylesspalace.tusky.entity.Filter
 import com.keylesspalace.tusky.entity.Poll
+import com.keylesspalace.tusky.network.ConnectionManager
 import com.keylesspalace.tusky.network.FilterModel
-import com.keylesspalace.tusky.network.MastodonApi
 import com.keylesspalace.tusky.settings.PrefKeys
 import com.keylesspalace.tusky.usecase.TimelineCases
 import com.keylesspalace.tusky.viewdata.StatusViewData
@@ -51,7 +51,7 @@ import kotlinx.coroutines.rx3.await
 
 abstract class TimelineViewModel(
     private val timelineCases: TimelineCases,
-    private val api: MastodonApi,
+    private val connectionManager: ConnectionManager,
     private val eventHub: EventHub,
     protected val accountManager: AccountManager,
     private val sharedPreferences: SharedPreferences,
@@ -66,6 +66,7 @@ abstract class TimelineViewModel(
         private set
     var tags: List<String> = emptyList()
         private set
+    private val api get() = connectionManager.mastodonApi
 
     protected var alwaysShowSensitiveMedia = false
     protected var alwaysOpenSpoilers = false

@@ -25,14 +25,14 @@ import com.keylesspalace.tusky.db.AccountManager
 import com.keylesspalace.tusky.db.AppDatabase
 import com.keylesspalace.tusky.db.DraftEntity
 import com.keylesspalace.tusky.entity.Status
-import com.keylesspalace.tusky.network.MastodonApi
+import com.keylesspalace.tusky.network.ConnectionManager
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class DraftsViewModel @Inject constructor(
     val database: AppDatabase,
     val accountManager: AccountManager,
-    val api: MastodonApi,
+    val connectionManager: ConnectionManager,
     val draftHelper: DraftHelper
 ) : ViewModel() {
 
@@ -61,7 +61,7 @@ class DraftsViewModel @Inject constructor(
     }
 
     suspend fun getStatus(statusId: String): NetworkResult<Status> {
-        return api.status(statusId)
+        return connectionManager.mastodonApi.status(statusId)
     }
 
     override fun onCleared() {

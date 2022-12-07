@@ -54,6 +54,7 @@ import com.keylesspalace.tusky.di.Injectable
 import com.keylesspalace.tusky.entity.Attachment
 import com.keylesspalace.tusky.entity.Status
 import com.keylesspalace.tusky.interfaces.AccountSelectionListener
+import com.keylesspalace.tusky.network.ConnectionManager
 import com.keylesspalace.tusky.network.MastodonApi
 import com.keylesspalace.tusky.usecase.TimelineCases
 import com.keylesspalace.tusky.util.openLink
@@ -78,13 +79,15 @@ abstract class SFragment : Fragment(), Injectable {
     private lateinit var bottomSheetActivity: BottomSheetActivity
 
     @Inject
-    lateinit var mastodonApi: MastodonApi
+    lateinit var connectionManager: ConnectionManager
 
     @Inject
     lateinit var accountManager: AccountManager
 
     @Inject
     lateinit var timelineCases: TimelineCases
+
+    fun getMastodonApi(): MastodonApi { return connectionManager.mastodonApi }
 
     override fun startActivity(intent: Intent) {
         super.startActivity(intent)
@@ -423,7 +426,7 @@ abstract class SFragment : Fragment(), Injectable {
 
     private fun editStatus(id: String, status: Status) {
         lifecycleScope.launch {
-            mastodonApi.statusSource(id).fold(
+            connectionManager.mastodonApi.statusSource(id).fold(
                 { source ->
                     val composeOptions = ComposeOptions(
                         content = source.text,

@@ -8,11 +8,12 @@ import androidx.paging.PagingConfig
 import androidx.paging.cachedIn
 import com.keylesspalace.tusky.di.Injectable
 import com.keylesspalace.tusky.entity.HashTag
+import com.keylesspalace.tusky.network.ConnectionManager
 import com.keylesspalace.tusky.network.MastodonApi
 import javax.inject.Inject
 
 class FollowedTagsViewModel @Inject constructor (
-    api: MastodonApi
+    connectionManager: ConnectionManager
 ) : ViewModel(), Injectable {
     val tags: MutableList<HashTag> = mutableListOf()
     var nextKey: String? = null
@@ -21,7 +22,7 @@ class FollowedTagsViewModel @Inject constructor (
     @OptIn(ExperimentalPagingApi::class)
     val pager = Pager(
         config = PagingConfig(pageSize = 100),
-        remoteMediator = FollowedTagsRemoteMediator(api, this),
+        remoteMediator = FollowedTagsRemoteMediator(connectionManager.mastodonApi, this),
         pagingSourceFactory = {
             FollowedTagsPagingSource(
                 viewModel = this

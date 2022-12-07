@@ -24,15 +24,16 @@ import androidx.paging.cachedIn
 import at.connyduck.calladapter.networkresult.fold
 import com.keylesspalace.tusky.appstore.EventHub
 import com.keylesspalace.tusky.entity.ScheduledStatus
-import com.keylesspalace.tusky.network.MastodonApi
+import com.keylesspalace.tusky.network.ConnectionManager
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class ScheduledStatusViewModel @Inject constructor(
-    val mastodonApi: MastodonApi,
+    val connectionManager: ConnectionManager,
     val eventHub: EventHub
 ) : ViewModel() {
 
+    private val mastodonApi get() = connectionManager.mastodonApi
     private val pagingSourceFactory = ScheduledStatusPagingSourceFactory(mastodonApi)
 
     val data = Pager(
