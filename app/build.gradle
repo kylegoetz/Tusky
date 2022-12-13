@@ -156,5 +156,6 @@ dependencies {
     androidTestImplementation libs.espresso.core
     androidTestImplementation libs.androidx.room.testing
     androidTestImplementation libs.androidx.test.junit
-
+    androidTestImplementation libs.androidx.test.ktx
+    androidTestImplementation libs.dexmaker.mockito
 }
