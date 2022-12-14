@@ -152,7 +152,7 @@ class AccountViewModel @Inject constructor(
     }
 
     fun unblockDomain(instance: String) {
-        mastodonApi.unblockDomain(instance).enqueue(object : Callback<Any> {
+        mastodonApi.unblockDomain().enqueue(object : Callback<Any> {
             override fun onResponse(call: Call<Any>, response: Response<Any>) {
                 if (response.isSuccessful) {
                     val relation = relationshipData.value?.data

@@ -174,7 +174,7 @@ suspend fun registerUnifiedPushEndpoint(
     val auth = CryptoUtil.secureRandomBytesEncoded(16)
 
     api.subscribePushNotifications(
-        "Bearer ${account.accessToken}", account.domain,
+        "Bearer ${account.accessToken}",
         endpoint, keyPair.pubkey, auth,
         buildSubscriptionData(context, account)
     ).onFailure { throwable ->
@@ -196,7 +196,7 @@ suspend fun registerUnifiedPushEndpoint(
 suspend fun updateUnifiedPushSubscription(context: Context, api: MastodonApi, accountManager: AccountManager, account: AccountEntity) {
     withContext(Dispatchers.IO) {
         api.updatePushNotificationSubscription(
-            "Bearer ${account.accessToken}", account.domain,
+            "Bearer ${account.accessToken}",
             buildSubscriptionData(context, account)
         ).onSuccess {
             Log.d(TAG, "UnifiedPush subscription updated for account ${account.id}")
@@ -209,7 +209,7 @@ suspend fun updateUnifiedPushSubscription(context: Context, api: MastodonApi, ac
 
 suspend fun unregisterUnifiedPushEndpoint(api: MastodonApi, accountManager: AccountManager, account: AccountEntity) {
     withContext(Dispatchers.IO) {
-        api.unsubscribePushNotifications("Bearer ${account.accessToken}", account.domain)
+        api.unsubscribePushNotifications("Bearer ${account.accessToken}")
             .onFailure {
                 Log.d(TAG, "Error unregistering push endpoint for account " + account.id)
                 Log.d(TAG, Log.getStackTraceString(it))

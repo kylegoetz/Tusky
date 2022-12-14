@@ -172,7 +172,6 @@ class SendStatusService : Service(), Injectable {
             val sendResult = if (statusToSend.statusId == null) {
                 mastodonApi.createStatus(
                     "Bearer " + account.accessToken,
-                    account.domain,
                     statusToSend.idempotencyKey,
                     newStatus
                 )

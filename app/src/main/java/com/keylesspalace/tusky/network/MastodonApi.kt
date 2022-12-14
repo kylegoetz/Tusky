@@ -80,7 +80,7 @@ interface MastodonApi {
     suspend fun getCustomEmojis(): NetworkResult<List<Emoji>>
 
     @GET("api/v1/instance")
-    suspend fun getInstance(@Header(DOMAIN_HEADER) domain: String? = null): NetworkResult<Instance>
+    suspend fun getInstance(): NetworkResult<Instance>
 
     @GET("api/v1/filters")
     suspend fun getFilters(): NetworkResult<List<Filter>>
@@ -130,14 +130,12 @@ interface MastodonApi {
     @GET("api/v1/markers")
     fun markersWithAuth(
         @Header("Authorization") auth: String,
-        @Header(DOMAIN_HEADER) domain: String,
         @Query("timeline[]") timelines: List<String>
     ): Single<Map<String, Marker>>
 
     @GET("api/v1/notifications")
     fun notificationsWithAuth(
         @Header("Authorization") auth: String,
-        @Header(DOMAIN_HEADER) domain: String,
         @Query("since_id") sinceId: String?
     ): Single<List<Notification>>
 
@@ -160,7 +158,6 @@ interface MastodonApi {
     @POST("api/v1/statuses")
     suspend fun createStatus(
         @Header("Authorization") auth: String,
-        @Header(DOMAIN_HEADER) domain: String,
         @Header("Idempotency-Key") idempotencyKey: String,
         @Body status: NewStatus
     ): NetworkResult<Status>
@@ -274,7 +271,6 @@ interface MastodonApi {
 
     @GET("api/v1/accounts/verify_credentials")
     suspend fun accountVerifyCredentials(
-        @Header(DOMAIN_HEADER) domain: String? = null,
         @Header("Authorization") auth: String? = null,
     ): NetworkResult<Account>
 
@@ -434,7 +430,7 @@ interface MastodonApi {
     @FormUrlEncoded
     // @DELETE doesn't support fields
     @HTTP(method = "DELETE", path = "api/v1/domain_blocks", hasBody = true)
-    fun unblockDomain(@Field("domain") domain: String): Call<Any>
+    fun unblockDomain(): Call<Any>
 
     @GET("api/v1/favourites")
     suspend fun favourites(
@@ -468,7 +464,6 @@ interface MastodonApi {
     @FormUrlEncoded
     @POST("api/v1/apps")
     suspend fun authenticateApp(
-        @Header(DOMAIN_HEADER) domain: String,
         @Field("client_name") clientName: String,
         @Field("redirect_uris") redirectUris: String,
         @Field("scopes") scopes: String,
@@ -478,7 +473,6 @@ interface MastodonApi {
     @FormUrlEncoded
     @POST("oauth/token")
     suspend fun fetchOAuthToken(
-        @Header(DOMAIN_HEADER) domain: String,
         @Field("client_id") clientId: String,
         @Field("client_secret") clientSecret: String,
         @Field("redirect_uri") redirectUri: String,
@@ -662,7 +656,6 @@ interface MastodonApi {
     @POST("api/v1/push/subscription")
     suspend fun subscribePushNotifications(
         @Header("Authorization") auth: String,
-        @Header(DOMAIN_HEADER) domain: String,
         @Field("subscription[endpoint]") endPoint: String,
         @Field("subscription[keys][p256dh]") keysP256DH: String,
         @Field("subscription[keys][auth]") keysAuth: String,
@@ -676,14 +669,12 @@ interface MastodonApi {
     @PUT("api/v1/push/subscription")
     suspend fun updatePushNotificationSubscription(
         @Header("Authorization") auth: String,
-        @Header(DOMAIN_HEADER) domain: String,
         @FieldMap data: Map<String, Boolean>
     ): NetworkResult<NotificationSubscribeResult>
 
     @DELETE("api/v1/push/subscription")
     suspend fun unsubscribePushNotifications(
         @Header("Authorization") auth: String,
-        @Header(DOMAIN_HEADER) domain: String,
     ): NetworkResult<ResponseBody>
 
     @GET("api/v1/tags/{name}")

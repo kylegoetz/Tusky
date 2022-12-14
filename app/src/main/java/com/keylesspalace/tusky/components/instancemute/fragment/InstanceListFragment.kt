@@ -80,7 +80,7 @@ class InstanceListFragment : Fragment(R.layout.fragment_instance_list), Injectab
                 }
             })
         } else {
-            api.unblockDomain(instance).enqueue(object : Callback<Any> {
+            api.unblockDomain().enqueue(object : Callback<Any> {
                 override fun onFailure(call: Call<Any>, t: Throwable) {
                     Log.e(TAG, "Error unmuting domain $instance")
                 }

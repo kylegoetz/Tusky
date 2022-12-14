@@ -41,7 +41,6 @@ class NotificationFetcher @Inject constructor(
         Log.d(TAG, "getting Notifications for " + account.fullName)
         val notifications = connectionManager.mastodonApi.notificationsWithAuth(
             authHeader,
-            account.domain,
             account.lastNotificationId
         ).blockingGet()
 
@@ -65,7 +64,6 @@ class NotificationFetcher @Inject constructor(
         return try {
             val allMarkers = connectionManager.mastodonApi.markersWithAuth(
                 authHeader,
-                account.domain,
                 listOf("notifications")
             ).blockingGet()
             val notificationMarker = allMarkers["notifications"]

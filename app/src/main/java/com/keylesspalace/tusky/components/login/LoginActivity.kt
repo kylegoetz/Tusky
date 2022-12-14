@@ -181,7 +181,7 @@ class LoginActivity : BaseActivity(), Injectable {
         lifecycleScope.launch {
             connectionManager.apiDomain = domain
             mastodonApi.authenticateApp(
-                domain, getString(R.string.app_name), oauthRedirectUri,
+                getString(R.string.app_name), oauthRedirectUri,
                 OAUTH_SCOPES, getString(R.string.tusky_website)
             ).fold(
                 { credentials ->
@@ -240,7 +240,7 @@ class LoginActivity : BaseActivity(), Injectable {
         setLoading(true)
 
         mastodonApi.fetchOAuthToken(
-            domain, clientId, clientSecret, oauthRedirectUri, code, "authorization_code"
+            clientId, clientSecret, oauthRedirectUri, code, "authorization_code"
         ).fold(
             { accessToken ->
                 fetchAccountDetails(accessToken, domain, clientId, clientSecret)
@@ -262,7 +262,6 @@ class LoginActivity : BaseActivity(), Injectable {
     ) {
 
         mastodonApi.accountVerifyCredentials(
-            domain = domain,
             auth = "Bearer ${accessToken.accessToken}"
         ).fold({ newAccount ->
             accountManager.addAccount(
